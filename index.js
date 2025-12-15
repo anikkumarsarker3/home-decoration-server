@@ -6,7 +6,21 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const admin = require("firebase-admin");
 
 const app = express()
-app.use(cors())
+// app.use(cors())
+app.use(
+    cors({
+        origin: [
+            // process.env.CLIENT_DOMAIN,
+            'http://localhost:5173',
+            'http://localhost:5174',
+            'https://home-decoration-ph.web.app',
+        ],
+        credentials: true,
+        methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+)
+
 app.use(express.json())
 const port = process.env.PORT || 3000
 const decoded = Buffer.from(process.env.FIREBASE_SERVICE_KEY, 'base64').toString(
