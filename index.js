@@ -27,9 +27,7 @@ const decoded = Buffer.from(process.env.FIREBASE_SERVICE_KEY, 'base64').toString
     'utf-8'
 )
 const serviceAccount = JSON.parse(decoded)
-
 // const serviceAccount = require("path/to/serviceAccountKey.json");
-
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
@@ -89,7 +87,7 @@ async function run() {
 
 
         // Users APIs
-        app.post('/users', async (req, res) => {
+        app.post('/users', verifyJWT, async (req, res) => {
             const user = req.body;
             user.role = 'user';
             user.createdAt = new Date();
@@ -111,13 +109,13 @@ async function run() {
             const result = await usersCollection.updateOne({ email: user.email }, updateDoc);
             res.send(result);
         });
-        app.get('/users/role/:email', async (req, res) => {
+        app.get('/users/role/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
             const user = await usersCollection.findOne(query);
             res.send({ role: user?.role });
         });
-        app.patch('/users/account-status/:id', verifyJWT, async (req, res) => {
+        app.patch('/users/account-status/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const { accountStatus } = req.body;
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
@@ -365,7 +363,7 @@ async function run() {
         app.get('/decorator/today-schedule', verifyJWT, verifyDecorator, async (req, res) => {
             const email = req.tokenEmail;
             const today = new Date().toISOString().split('T')[0];
-            console.log("today", today)
+            // console.log("today", today)
             const jobs = await ordersCollection.find({
                 assignedDecoratorEmail: email,
                 servideDate: today
