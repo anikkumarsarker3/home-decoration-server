@@ -127,7 +127,7 @@ async function run() {
             const user = await usersCollection.updateOne(query, updateDoc);
             res.send(user);
         });
-        app.patch('/users/role/:id', verifyJWT, async (req, res) => {
+        app.patch('/users/role/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const { role } = req.body;
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
@@ -140,11 +140,11 @@ async function run() {
             res.send(user);
         });
 
-        app.get('/users', verifyJWT, async (req, res) => {
+        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
             const user = await usersCollection.find({ role: { $ne: "admin" } }).toArray();
             res.send(user);
         });
-        app.get('/users/decorators', async (req, res) => {
+        app.get('/users/decorators', verifyJWT, verifyAdmin, async (req, res) => {
             const user = await usersCollection.find({ role: 'decorator', accountStatus: 'available' || null }).toArray();
             res.send(user);
         });
