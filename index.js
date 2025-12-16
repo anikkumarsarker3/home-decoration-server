@@ -152,7 +152,7 @@ async function run() {
             const user = await usersCollection.findOne({ email: req.tokenEmail })
             res.send(user);
         });
-        app.delete('/users/delete-user/:id', async (req, res) => {
+        app.delete('/users/delete-user/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const result = await usersCollection.deleteOne({ _id: new ObjectId(id) });
             res.send(result);
@@ -188,11 +188,11 @@ async function run() {
             const result = await servicesCollection.updateOne(query, updateDoc);
             res.send(result);
         })
-        app.get('/services', async (req, res) => {
+        app.get('/services', verifyJWT, async (req, res) => {
             const result = await servicesCollection.find().toArray();
             res.send(result);
         })
-        app.get('/services/:id', async (req, res) => {
+        app.get('/services/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             // console.log(id)
             const query = { _id: new ObjectId(id) };
@@ -301,15 +301,15 @@ async function run() {
         });
 
 
-        app.get('/manage-decorators-services', async (req, res) => {
+        app.get('/manage-decorators-services', verifyJWT, verifyAdmin, async (req, res) => {
             const user = await ordersCollection.find({ status: { $ne: "pending" } }).toArray();
             res.send(user);
         })
-        app.get('/orders', async (req, res) => {
+        app.get('/orders', verifyJWT, async (req, res) => {
             const orders = await ordersCollection.find().toArray();
             res.send(orders);
         })
-        app.patch('/orders/assign', async (req, res) => {
+        app.patch('/orders/assign', verifyJWT, verifyAdmin, async (req, res) => {
             const { orderId, assignedDecoratorEmail } = req.body;
             // console.log(orderId, assignedDecoratorEmail)
 
@@ -337,13 +337,13 @@ async function run() {
             const orders = await ordersCollection.find({ status: "pending" }).toArray();
             res.send(orders);
         })
-        app.get('/orders/:email', async (req, res) => {
+        app.get('/orders/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             // console.log(email)
             const orders = await ordersCollection.find({ customerEmail: email }).toArray();
             res.send(orders);
         })
-        app.delete('/orders/:id', async (req, res) => {
+        app.delete('/orders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const orders = await ordersCollection.deleteOne({ _id: new ObjectId(id) })
             res.send(orders);
