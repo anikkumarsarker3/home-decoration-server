@@ -188,7 +188,7 @@ async function run() {
             const result = await servicesCollection.updateOne(query, updateDoc);
             res.send(result);
         })
-        app.get('/services', verifyJWT, async (req, res) => {
+        app.get('/services', async (req, res) => {
             const result = await servicesCollection.find().toArray();
             res.send(result);
         })
