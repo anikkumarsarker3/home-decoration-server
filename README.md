@@ -52,8 +52,8 @@ CLIENT_DOMAIN=client_domain
 
 ### Installation
 ```
-git clone https://github.com/your-username/styledecor-server.git
-cd styledecor-server
+git clone https://github.com/anikkumarsarker3/home-decoration-server.git
+cd home-decoration-server
 npm install
 ```
 
